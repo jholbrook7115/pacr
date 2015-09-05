@@ -40,19 +40,7 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        double lat = currentLocation.getLatitude();
-        double lon = currentLocation.getLongitude();
-        LatLng myLatLng = new LatLng(lat, lon);
-        lastWaypoint = myLatLng;
-        //Add marker
-        mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
-
-        //Add path line to map
-        addRouteWaypoint(new LatLng(myLatLng.latitude+1, myLatLng.longitude+1));
-
-        //Move camera to current location
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLatLng, 10);
-        mMap.animateCamera(cameraUpdate);
+        initializeMapElements();
     }
 
     @Override
@@ -101,6 +89,21 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
     }
 
+    private void initializeMapElements(){
+        double lat = currentLocation.getLatitude();
+        double lon = currentLocation.getLongitude();
+        LatLng myLatLng = new LatLng(lat, lon);
+        lastWaypoint = myLatLng;
+        //Add marker
+        mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
+
+        //Add path line to map
+        addRouteWaypoint(new LatLng(myLatLng.latitude+1, myLatLng.longitude+1));
+
+        //Move camera to current location
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10));
+
+    }
     public void addRouteWaypoint(LatLng newWaypoint) {
         mMap.addPolyline(new PolylineOptions().
                 add(lastWaypoint, newWaypoint)
