@@ -9,7 +9,12 @@ import android.location.LocationManager;
 import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,7 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapsActivity extends FragmentActivity implements LocationListener{
+public class MapsActivity extends FragmentActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager locationManager;
@@ -27,6 +32,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
     private LatLng lastWaypoint;
 
+    private GoogleApiClient googleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,13 +41,27 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
         setUpMapIfNeeded();
 
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
 //        locationListener = getLocationListener();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, this/*locationListener*/);
 
-        currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        initializeMapElements();
+        currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+
+        if(currentLocation != null) {
+            initializeMapElements();
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Location Service is off!", Toast.LENGTH_LONG).show();
+
+        }
     }
 
     @Override
@@ -191,6 +212,23 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
     @Override
     public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Toast.makeText(getApplicationContext(), "Location Services Connected!", Toast.LENGTH_LONG).show();
+        currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        initializeMapElements();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
 }
