@@ -2,11 +2,9 @@ package me.gonen.pacr;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -14,18 +12,25 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapsActivity extends FragmentActivity implements LocationListener{
+import java.util.ArrayList;
+
+public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager locationManager;
-//    private LocationListener locationListener;
+    private LocationListener locationListener;
     private Location currentLocation;
-
     private LatLng lastWaypoint;
+    private float zoomLevel = 10;
+    private Marker myMarker;
+    private ArrayList<LatLng> route;
+    private boolean routeDrawn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +39,8 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
         setUpMapIfNeeded();
 
-//        locationListener = getLocationListener();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, this/*locationListener*/);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 3, getLocationListener());
 
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
@@ -89,29 +93,41 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
     }
 
-    private void initializeMapElements(){
+    private void initializeMapElements() {
         double lat = currentLocation.getLatitude();
         double lon = currentLocation.getLongitude();
         LatLng myLatLng = new LatLng(lat, lon);
-        lastWaypoint = myLatLng;
-        //Add marker
-        mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
 
-        //Add path line to map
-        addRouteWaypoint(new LatLng(myLatLng.latitude+1, myLatLng.longitude+1));
+        //Set initial values for running value variables
+        lastWaypoint = myLatLng;
+        zoomLevel = 10;
+
+        //Add marker
+        myMarker = mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
 
         //Move camera to current location
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel));
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition position) {
+                if (zoomLevel != position.zoom) {
+//                    isZooming = true;
+                }
+
+                zoomLevel = position.zoom;
+            }
+        });
 
     }
+
     public void addRouteWaypoint(LatLng newWaypoint) {
         mMap.addPolyline(new PolylineOptions().
                 add(lastWaypoint, newWaypoint)
-                .width(10).color(Color.BLUE));
+                .width(10).color(Color.argb(75,0,0,255)));
         lastWaypoint = newWaypoint;
     }
 
-    /*private LocationListener getLocationListener() {
+    private LocationListener getLocationListener() {
         if (locationListener == null)
             locationListener = new LocationListener() {
                 @Override
@@ -127,15 +143,14 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
                     LatLng myLatLng = new LatLng(lat, lon);
 
                     //Add marker
-                    mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
+                    myMarker.setPosition(myLatLng);
 
-                    //Add path line to map
-                    addPolyline();
+                    if(!routeDrawn) drawRoute();
 
                     //Move camera to current location
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLatLng, 10);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel);
                     mMap.animateCamera(cameraUpdate);
-                    locationManager.removeUpdates(this);
+
                 }
 
                 @Override
@@ -153,44 +168,14 @@ public class MapsActivity extends FragmentActivity implements LocationListener{
 
                 }
             };
-        locationManager.requestSingleUpdate(locationManager.getBestProvider(new Criteria(), true), locationListener, Looper.myLooper());
         return locationListener;
-    }*/
-
-    @Override
-    public void onLocationChanged(Location location) {
-        currentLocation.set(location);
-        double lat = 0;
-        double lon = 0;
-        if (location != null) {
-            lat = location.getLatitude();
-            lon = location.getLongitude();
-        }
-
-        LatLng myLatLng = new LatLng(lat, lon);
-
-        //Add marker
-        mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
-
-
-        //Move camera to current location
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLatLng, 10);
-        mMap.animateCamera(cameraUpdate);
-//        locationManager.removeUpdates(this);
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
+    private void drawRoute(){
+        //Add path line to map
+        addRouteWaypoint(new LatLng(currentLocation.getLatitude() + 1, currentLocation.getLongitude()));
 
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
+        routeDrawn = true;
     }
 }
+
