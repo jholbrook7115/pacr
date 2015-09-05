@@ -2,18 +2,12 @@ package me.gonen.pacr;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,20 +20,17 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Location currentLocation;
-
     private LatLng lastWaypoint;
     private float zoomLevel = 10;
     private Marker myMarker;
     private ArrayList<LatLng> route;
     private boolean routeDrawn = false;
-
-    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,28 +39,12 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
 
         setUpMapIfNeeded();
 
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-
-//        locationListener = getLocationListener();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 3, getLocationListener());
-        currentLocation = new Location(LocationManager.NETWORK_PROVIDER);
-        //currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-/*
+        currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        if (currentLocation != null) {
-            initializeMapElements();
-        } else {
-            Toast.makeText(getApplicationContext(), "Location Service is off!", Toast.LENGTH_LONG).show();
-
-        }
-*/
+        initializeMapElements();
     }
 
     @Override
@@ -129,14 +104,16 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
 
         //Add marker
         myMarker = mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
-        //Add path line to map
-        addRouteWaypoint(new LatLng(myLatLng.latitude + 1, myLatLng.longitude + 1));
 
         //Move camera to current location
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel));
         mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             @Override
             public void onCameraChange(CameraPosition position) {
+                if (zoomLevel != position.zoom) {
+//                    isZooming = true;
+                }
+
                 zoomLevel = position.zoom;
             }
         });
@@ -144,10 +121,9 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
     }
 
     public void addRouteWaypoint(LatLng newWaypoint) {
-        if (lastWaypoint == null) lastWaypoint = newWaypoint;
-        mMap.addPolyline(new PolylineOptions()
-                .add(lastWaypoint, newWaypoint)
-                .width(10).color(Color.argb(75, 0, 0, 255)));
+        mMap.addPolyline(new PolylineOptions().
+                add(lastWaypoint, newWaypoint)
+                .width(10).color(Color.argb(75,0,0,255)));
         lastWaypoint = newWaypoint;
     }
 
@@ -156,10 +132,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-
-                    if (currentLocation == null) currentLocation = new Location(location);
-                    else currentLocation.set(location);
-
+                    currentLocation.set(location);
                     double lat = 0;
                     double lon = 0;
                     if (location != null) {
@@ -170,12 +143,9 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
                     LatLng myLatLng = new LatLng(lat, lon);
 
                     //Add marker
-                    MarkerOptions defaultMarkerOption = new MarkerOptions().position(myLatLng);
-                    if (myMarker == null) myMarker = mMap.addMarker(defaultMarkerOption);
-                    else myMarker.setPosition(myLatLng);
+                    myMarker.setPosition(myLatLng);
 
-
-                    if (!routeDrawn) drawRoute();
+                    if(!routeDrawn) drawRoute();
 
                     //Move camera to current location
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel);
@@ -198,31 +168,14 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
 
                 }
             };
-        locationManager.requestSingleUpdate(locationManager.getBestProvider(new Criteria(), true), locationListener, Looper.myLooper());
         return locationListener;
     }
 
-    private void drawRoute() {
+    private void drawRoute(){
         //Add path line to map
         addRouteWaypoint(new LatLng(currentLocation.getLatitude() + 1, currentLocation.getLongitude()));
 
         routeDrawn = true;
     }
-
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        initializeMapElements();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
 }
+

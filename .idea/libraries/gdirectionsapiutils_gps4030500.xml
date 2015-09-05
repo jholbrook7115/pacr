@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="gdirectionsapiutils_gps4030500">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/gdirectionsapiutils_gps4030500.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
