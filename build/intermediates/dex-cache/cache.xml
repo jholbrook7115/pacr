@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="73ccb92b70112f2e463e415ef8d7275de7da6516">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-df8f7d289dc59125dc6be643dc5e19861e5a40ad.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-nearby/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="ef5f051e7308febe289dc93c67c5f32785b4260a">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-564e4a3a86ddd8e94ce3066c918aaba549548da0.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="17f8750d5c0749e44dd7c54aa390d9c937803825">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-6b86d6be0b93bb0d7e024d0d1a32ad01041c6584.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="a96b762bde4139de855735f175ec4d17dca55a6d">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-a411a967cb7197228773cc8ffb60677d4f755275.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="4e86306289ace4aa0cfec44a05ed2b410d36989d">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-bb57c688c1b37d84c7134e371a45d4086628225e.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-cast/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="4cd0b093824b3228fffc21ea369b98d0b1db6566">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-8ee10cfa4a279bfd008ae3f3472a7a327ad9ff12.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-identity/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="fb04b12526b0073c7fb1ebb70c5842d82ee95596">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-c9552212607262cf7c85d50d0e47e7e8a5dfd58f.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-safetynet/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="c976518693e89ad44fbfccfc654941eaec198d08">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-ecc734b2139fbb6ebf6552d8e9024e689c58ee23.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d84409890828e07d344a3b9b1da545dba9897b51">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-33b8a7e71b93258d683de086c7c527460d1866ea.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="3033cc3a2c68dff3e5b646d6d084bdbdf7d00b25">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-72360a927155afa3a51fbba5319d4dfaec15b05e.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="29fd6d3794b71491c2789708cd8d03c71feb8954">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-697c7d71738109c4da141482997cd36c99655f34.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-ads/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="e3d791b42eaa90416cd0b2d2e608092794a3baa4">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-b40e1ad445642d7bda464d095d7e88497de44b7f.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-fitness/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="3c0b099f9de16b265ecd6122fcb603e7d0d29f90">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-4c5dce508cacbe1b55140e9dd3aa982ba26b2fbb.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="4c93d99d454c975536bbe3b42283eee847f03ea3">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-bcbd99dffa4a8a65e6b87c45a98674ebd67064ac.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-games/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="055783146ba9654a725442563be78cad303aad1f">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-5eac631c3112ffa9885a4a6169567f4a99ff0476.jar" />
+    </item>
+    <item
+        jar="/home/gonen/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/22.0.0/support-annotations-22.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="685d0b2c590447e85284ed84712cb363ba04eff8">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/support-annotations-22.0.0-7d7fb7edc249e501bf87030d5e68ecafcdc476d6.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-plus/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="0e8228b4bc69c6a2c8d7c18498a77e53417d2574">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-5556be8835bfdbdd46f2df68ab8a209619fbc0dd.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="a08d65794b844d8e7540bf9a33859bf3b2482d7f">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-326608127b8a46fb4e6c91c9b3cfb8d675f90493.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-panorama/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="1c5a76debf0c2857ccad422c4a80ed785982f8df">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-e6e694be75ec550d19864c2182a77a5c907286ea.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-gcm/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="9224bc4c54ba95147c7eabd874573763c07cb6be">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-8fa9bf17d32347d006150806a8bbfed9724f8f0e.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-drive/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="41b3870cbe5fa546d8095b5b89d42cb69f3dd175">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-b8dbf6be42c7cf6f50d09e8be17675962c4d9626.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appstate/7.0.0/jars/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="7ff613bf78ab057293892fdbd4169eda899c89b9">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/classes-a4ebad10868f46e2c503d5c492df0b421050758d.jar" />
+    </item>
+    <item
+        jar="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.0.0/jars/libs/internal_impl-22.0.0.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="b5b92f469d515a13d778900f6d50c03d12f35504">
+        <dex dex="/home/gonen/AndroidStudioProjects/pacr/app/build/intermediates/pre-dexed/debug/internal_impl-22.0.0-98c8cae4fd8571c8d36e86600742ee827b16f5e9.jar" />
+    </item>
+
+</items>
