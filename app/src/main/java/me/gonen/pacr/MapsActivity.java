@@ -1,73 +1,46 @@
 package me.gonen.pacr;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-
-public class MapsActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class MapsActivity extends FragmentActivity implements LocationListener{
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private GoogleApiClient googleApiClient;
+    private LocationManager locationManager;
+//    private LocationListener locationListener;
+    private Location currentLocation;
 
-    private LocationListener locationListener;
+    private LatLng lastWaypoint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+        setUpMapIfNeeded();
 
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                double lat = 0;
-                double lon = 0;
-                if (location!=null) {
-                    lat = location.getLatitude();
-                    lon = location.getLongitude();
-                }
-                LatLng myLatLng = new LatLng(lat, lon);
-                mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
-                mMap.addPolyline(new PolylineOptions().add(myLatLng, new LatLng(lat+1,lon+1)));
-            }
+//        locationListener = getLocationListener();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 0, this/*locationListener*/);
 
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
+        currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-
-        LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
+        initializeMapElements();
     }
 
     @Override
@@ -113,27 +86,111 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
     private void setUpMap() {
 
         mMap.setMyLocationEnabled(true);
-        
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
 
     }
 
-    @Override
-    public void onConnectionSuspended(int i) {
+    private void initializeMapElements(){
+        double lat = currentLocation.getLatitude();
+        double lon = currentLocation.getLongitude();
+        LatLng myLatLng = new LatLng(lat, lon);
+        lastWaypoint = myLatLng;
+        //Add marker
+        mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
+
+        //Add path line to map
+        addRouteWaypoint(new LatLng(myLatLng.latitude+1, myLatLng.longitude+1));
+
+        //Move camera to current location
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 10));
 
     }
+    public void addRouteWaypoint(LatLng newWaypoint) {
+        mMap.addPolyline(new PolylineOptions().
+                add(lastWaypoint, newWaypoint)
+                .width(10).color(Color.BLUE));
+        lastWaypoint = newWaypoint;
+    }
+
+    /*private LocationListener getLocationListener() {
+        if (locationListener == null)
+            locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    currentLocation.set(location);
+                    double lat = 0;
+                    double lon = 0;
+                    if (location != null) {
+                        lat = location.getLatitude();
+                        lon = location.getLongitude();
+                    }
+
+                    LatLng myLatLng = new LatLng(lat, lon);
+
+                    //Add marker
+                    mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
+
+                    //Add path line to map
+                    addPolyline();
+
+                    //Move camera to current location
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLatLng, 10);
+                    mMap.animateCamera(cameraUpdate);
+                    locationManager.removeUpdates(this);
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            };
+        locationManager.requestSingleUpdate(locationManager.getBestProvider(new Criteria(), true), locationListener, Looper.myLooper());
+        return locationListener;
+    }*/
 
     @Override
     public void onLocationChanged(Location location) {
+        currentLocation.set(location);
+        double lat = 0;
+        double lon = 0;
+        if (location != null) {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+        }
+
+        LatLng myLatLng = new LatLng(lat, lon);
+
+        //Add marker
+        mMap.addMarker(new MarkerOptions().position(myLatLng).title("Marker"));
+
+
+        //Move camera to current location
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLatLng, 10);
+        mMap.animateCamera(cameraUpdate);
+//        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
 
     }
 }
