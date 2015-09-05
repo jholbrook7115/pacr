@@ -49,7 +49,6 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.Co
                 mMap.addPolyline(new PolylineOptions().add(myLatLng, new LatLng(lat+1,lon+1)));
             }
 
-        setUpMapIfNeeded();
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
 
