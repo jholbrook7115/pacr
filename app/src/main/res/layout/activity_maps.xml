@@ -3,14 +3,26 @@
     android:layout_height="match_parent">
 
     <EditText
+        android:id="@+id/timepicker"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:inputType="time"
+        android:hint="Arrival Time"
+        android:background="@color/primary_color"
+        />
+    <EditText
         android:id="@+id/location_edittext"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:minHeight="10dp"
         android:inputType="text"
         android:hint="Location"
         android:layout_margin="2dp"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/timepicker"
+        android:background="@color/secondary_color"
         />
+
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"

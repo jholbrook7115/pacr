@@ -30,6 +30,7 @@ import com.google.maps.PendingResult;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -63,7 +64,7 @@ public class MapsActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        arrivalTime = new DateTime().withTime(9, 0, 0, 0);
+        arrivalTime = new DateTime().withTime(13, 0, 0, 0);
         directionsHelper = new DirectionsHelper();
         setUpMapIfNeeded();
 
@@ -80,6 +81,10 @@ public class MapsActivity extends FragmentActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     Toast.makeText(getApplicationContext(), "Searching for " + myEditText.getText().toString(), Toast.LENGTH_LONG).show();
+                    EditText myTimeEdit = (EditText) findViewById(R.id.timepicker);
+                    String today = Integer.toString(DateTime.now().getYear()) + "-" + Integer.toString(DateTime.now().getMonthOfYear()) + "-" + Integer.toString(DateTime.now().getDayOfMonth());
+                    arrivalTime = DateTime.parse(today + "T" + myTimeEdit.getText().toString());
+                    Toast.makeText(getApplicationContext(), "Arrival time set for " + arrivalTime.toString(), Toast.LENGTH_LONG).show();
                     getDirections(myEditText.getText().toString());
                 }
                 return false;
@@ -216,7 +221,7 @@ public class MapsActivity extends FragmentActivity {
         reverseRoute.addAll(route);
         Collections.reverse(reverseRoute);
 
-        LatLng previousWaypoint = new LatLng(0,0);
+        LatLng previousWaypoint = new LatLng(0, 0);
         Iterator<LatLng> it = reverseRoute.iterator();
         if (it.hasNext())
             previousWaypoint = it.next();
@@ -278,7 +283,7 @@ public class MapsActivity extends FragmentActivity {
                         Toast.makeText(getApplicationContext(), "Got to waypoint " + waypoint.toString(), Toast.LENGTH_SHORT).show();
                     }
 
-                    String str = Double.toString(getRemainingDistance()/1000);
+                    String str = Double.toString(getRemainingDistance() / 1000);
                     userText.setText(str.substring(0, str.indexOf(".") + 3).concat(" km"));
                 }
 
@@ -304,18 +309,22 @@ public class MapsActivity extends FragmentActivity {
     private double getRemainingDistance() {
         return directionsHelper.getDistanceInMeters(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), waypoints.peek().toGmsLatLng()) + waypoints.peek().distanceToDestination;
     }
+
     private long getRemainingTime() {
-        long remainingSeconds = (arrivalTime.getMillis()- DateTime.now().getMillis())/1000;
+        long remainingSeconds = (arrivalTime.getMillis() - DateTime.now().getMillis()) / 1000;
         return remainingSeconds;
     }
-    private double getRequiredSpeed(){
-        return getRemainingDistance()/getRemainingTime();
+
+    private double getRequiredSpeed() {
+        return getRemainingDistance() / getRemainingTime();
     }
-    private double getRequiredSpeedKMH(){
-        return getRemainingDistance()/getRemainingTime()*3.6;
+
+    private double getRequiredSpeedKMH() {
+        return getRemainingDistance() / getRemainingTime() * 3.6;
     }
-    private double getRequiredSpeedMPH(){
-        return getRequiredSpeedKMH()*1.6;
+
+    private double getRequiredSpeedMPH() {
+        return getRequiredSpeedKMH() * 1.6;
     }
 
 }
