@@ -267,7 +267,7 @@ public class MapsActivity extends FragmentActivity {
                     TextView userText = (TextView) findViewById(R.id.eta_textview);
                     TextView reqSpeedText = (TextView) findViewById(R.id.speed_textview);
 
-                    userText.setText(" - ");
+                    userText.setText("Distance");
 
                     if (waypoints == null || waypoints.empty()) return;
 

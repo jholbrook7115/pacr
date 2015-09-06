@@ -45,6 +45,7 @@ public class DirectionsService {
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
     }
+/*
     public void getDirections(LatLng origin, String destination, PendingResult.Callback<List<LatLng>> callback){
         this.callback = callback;
 
@@ -56,13 +57,12 @@ public class DirectionsService {
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
     }
+*/
+
 
     public void getDirections(LatLng origin, String destination, PendingResult.Callback<List<LatLng>> callback){
         this.callback = callback;
-        String key_val;
 
-
-        //String key = "key=AIzaSyCH_rxuml1AM7X1RGLGoWrnk1RwCds00Lo";
         String orig = "origin=" + origin.latitude + "," + origin.longitude;
 
         //Searching for the string specified by the user
@@ -90,6 +90,7 @@ public class DirectionsService {
         downloadTask.execute(url);
 
     }
+
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -251,6 +252,10 @@ public class DirectionsService {
         // Executes in UI thread, after the parsing process
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            if(result == null){
+                callback.onResult(null);
+                return;
+            }
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();

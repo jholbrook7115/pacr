@@ -42,7 +42,7 @@
             android:paddingBottom="15dp"
             android:background="@color/primary_color"
             android:gravity="center_horizontal|center_vertical"
-            android:text="test speed"
+            android:text="Required Speed"
             android:textSize="17sp"
             android:textColor="@color/white"/>
         </RelativeLayout>
@@ -59,7 +59,7 @@
             android:paddingBottom="15dp"
             android:background="@color/primary_color"
             android:gravity="center_horizontal|center_vertical"
-            android:text="test eta"
+            android:text="Distance"
             android:textSize="17sp"
             android:textColor="@color/white"/>
         </RelativeLayout>
