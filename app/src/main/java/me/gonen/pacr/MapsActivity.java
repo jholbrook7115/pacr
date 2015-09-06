@@ -28,9 +28,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.PendingResult;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeComparator;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -92,26 +90,6 @@ public class MapsActivity extends FragmentActivity {
             }
         });
 
-/*
-        myEditText.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                myEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-                    @Override
-                    public void onFocusChange(View v, boolean hasFocus) {
-                        if(!hasFocus){
-                            // user is done editing
-                            Toast.makeText(getApplicationContext(), "Searching for " + myEditText.getText().toString(), Toast.LENGTH_LONG).show();
-                            getDirections(myEditText.getText().toString());
-                        }
-                    }
-                });
-                return false;
-            }
-        });
-        */
     }
 
     @Override
@@ -133,12 +111,6 @@ public class MapsActivity extends FragmentActivity {
         }
     }
 
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
     private void setUpMap() {
 
         mMap.setMyLocationEnabled(true);
@@ -150,8 +122,7 @@ public class MapsActivity extends FragmentActivity {
         double lon = currentLocation.getLongitude();
         myLatLng = new LatLng(lat, lon);
 
-        //Set initial values for running value variables
-//        lastWaypoint = myLatLng;
+        //Set initial values for map variables
         zoomLevel = 15;
         pathLineWidth = 15;
 
@@ -197,13 +168,6 @@ public class MapsActivity extends FragmentActivity {
             }
         });
     }
-
-    /*public void addRouteWaypoint(LatLng newWaypoint) {
-        mMap.addPolyline(new PolylineOptions().
-                add(lastWaypoint, newWaypoint)
-                .width(pathLineWidth).color(Color.argb(75, 0, 255, 0)));
-        lastWaypoint = newWaypoint;
-    }*/
 
     private void drawRoute() {
         polyline = mMap.addPolyline(new PolylineOptions()
@@ -294,7 +258,7 @@ public class MapsActivity extends FragmentActivity {
 
                         String cSpd = Float.toString(currentSpeed);
 //                        cSpd = cSpd.substring(0, cSpd.indexOf(".") + 3);
-
+                        if(cSpd.equals("0.0") && currentSpeed>0) cSpd = "~0.01";
                         reqSpeedText.setText(cSpd + "/" + rSpd + " km/h");
 
                         Toast.makeText(getApplicationContext(), "Got to waypoint " + waypoint.toString(), Toast.LENGTH_SHORT).show();
