@@ -10,6 +10,10 @@
         android:inputType="time"
         android:hint="Arrival Time"
         android:background="@color/primary_color"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:padding="7dp"
+        android:layout_margin="1dp"
         />
     <EditText
         android:id="@+id/location_edittext"
@@ -18,9 +22,12 @@
         android:minHeight="10dp"
         android:inputType="text"
         android:hint="Location"
-        android:layout_margin="2dp"
+        android:layout_margin="1dp"
         android:layout_below="@+id/timepicker"
         android:background="@color/secondary_color"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:padding="7dp"
         />
 
 
@@ -77,11 +84,13 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <!--
-    |__________________________________________|
-    | Current Speed   |   Distance remaining |
-    |__________________________________________|
-
-    -->
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:ems="10"
+        android:id="@+id/editText"
+        android:layout_above="@+id/map"
+        android:layout_alignEnd="@+id/timepicker" />
 
 </RelativeLayout>

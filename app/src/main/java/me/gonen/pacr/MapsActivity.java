@@ -263,8 +263,6 @@ public class MapsActivity extends FragmentActivity {
                     //Add marker
                     myMarker.setPosition(myLatLng);
 
-//                    if (!routeDrawn) drawRoute();
-
                     //Move camera to current location
                     if (followLocation)
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel));
@@ -285,6 +283,18 @@ public class MapsActivity extends FragmentActivity {
 
                     String str = Double.toString(getRemainingDistance() / 1000);
                     userText.setText(str.substring(0, str.indexOf(".") + 3).concat(" km"));
+
+                    int ok = Color.argb(200, 200, 200, 50);
+                    int bad = Color.argb(200, 200, 50, 50);
+                    int good = Color.argb(200, 50, 255, 50);
+
+                    double speed = (double)location.getSpeed();
+
+                    int relevantColor = ok;
+                    if((int)speed > (int)getRequiredSpeed()) relevantColor = good;
+                    if((int)speed < (int)getRequiredSpeed()) relevantColor = bad;
+
+                    reqSpeedText.setBackgroundColor(relevantColor);
                 }
 
                 @Override
