@@ -7,6 +7,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 public class MapsActivity extends FragmentActivity {
 
@@ -36,7 +38,7 @@ public class MapsActivity extends FragmentActivity {
     private float zoomLevel;
     private int pathLineWidth;
     private Marker myMarker;
-    private ArrayList<Waypoint> waypoints = new ArrayList<>();
+    private Stack<Waypoint> waypoints = new Stack<>();
     private ArrayList<LatLng> route = new ArrayList<>();
     private Polyline polyline;
     private boolean routeDrawn = false;
@@ -121,6 +123,10 @@ public class MapsActivity extends FragmentActivity {
         dService.getDirections(myLatLng, defaultCoordinates, new PendingResult.Callback<List<LatLng>>() {
             @Override
             public void onResult(List<LatLng> result) {
+                if (result == null) {
+                    Toast.makeText(getApplicationContext(), "Could not find route", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 route.addAll(result);
                 analyzeRoute(route);
                 drawRoute();
@@ -150,8 +156,8 @@ public class MapsActivity extends FragmentActivity {
     }
 
     //Populates the waypoints ArrayList with the route waypoints, each with its relative distance from the destination
-    private void analyzeRoute(ArrayList<LatLng> route){
-        if(route == null) route = this.route;
+    private void analyzeRoute(ArrayList<LatLng> route) {
+        if (route == null) route = this.route;
         double runningDistance = 0;
 
         ArrayList<LatLng> reverseRoute = new ArrayList<>();
@@ -161,14 +167,13 @@ public class MapsActivity extends FragmentActivity {
         Iterator<LatLng> it = reverseRoute.iterator();
         LatLng previousWaypoint = it.next();
 
-        while(it.hasNext()){
+        while (it.hasNext()) {
             LatLng waypoint = it.next();
             double distance = directionsHelper.getDistanceInMeters(waypoint, previousWaypoint);
-            runningDistance+=distance;
+            runningDistance += distance;
             previousWaypoint = waypoint;
-            waypoints.add(new Waypoint(waypoint.latitude, waypoint.longitude, runningDistance));
+            waypoints.push(new Waypoint(waypoint.latitude, waypoint.longitude, runningDistance));
         }
-        Collections.reverse(waypoints);
 
     }
 
