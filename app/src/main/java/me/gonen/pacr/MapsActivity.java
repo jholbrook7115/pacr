@@ -57,6 +57,7 @@ public class MapsActivity extends FragmentActivity {
     private final LatLng defaultCoordinates = new LatLng(39.9814367, -75.15507);
     private EditText myEditText;
     private float accuracy = -1;
+    private float currentSpeed = -1;
     private DateTime arrivalTime;
 
     @Override
@@ -274,27 +275,35 @@ public class MapsActivity extends FragmentActivity {
 
                     if (waypoints == null || waypoints.empty()) return;
 
+                    int ok = Color.argb(200, 200, 200, 50);
+                    int bad = Color.argb(200, 200, 50, 50);
+                    int good = Color.argb(200, 50, 255, 50);
+
+                    currentSpeed = location.getSpeed();
+
+                    int relevantColor = ok;
+                    if((int)currentSpeed > (int)getRequiredSpeed()) relevantColor = good;
+                    if((int)currentSpeed < (int)getRequiredSpeed()) relevantColor = bad;
+
+                    reqSpeedText.setBackgroundColor(relevantColor);
+
                     if (directionsHelper.getDistanceInMeters(myLatLng, waypoints.peek().toGmsLatLng()) <= accuracy) {
                         Waypoint waypoint = waypoints.pop();
-                        String str = Double.toString(getRequiredSpeedKMH());
-                        reqSpeedText.setText(str.substring(0, str.indexOf(".") + 3).concat(" km/h"));
+                        String rSpd = Double.toString(getRequiredSpeedKMH());
+                        rSpd = rSpd.substring(0, rSpd.indexOf(".") + 3);
+
+                        String cSpd = Float.toString(currentSpeed);
+//                        cSpd = cSpd.substring(0, cSpd.indexOf(".") + 3);
+
+                        reqSpeedText.setText(cSpd + "/" + rSpd + " km/h");
+
                         Toast.makeText(getApplicationContext(), "Got to waypoint " + waypoint.toString(), Toast.LENGTH_SHORT).show();
                     }
 
                     String str = Double.toString(getRemainingDistance() / 1000);
                     userText.setText(str.substring(0, str.indexOf(".") + 3).concat(" km"));
 
-                    int ok = Color.argb(200, 200, 200, 50);
-                    int bad = Color.argb(200, 200, 50, 50);
-                    int good = Color.argb(200, 50, 255, 50);
 
-                    double speed = (double)location.getSpeed();
-
-                    int relevantColor = ok;
-                    if((int)speed > (int)getRequiredSpeed()) relevantColor = good;
-                    if((int)speed < (int)getRequiredSpeed()) relevantColor = bad;
-
-                    reqSpeedText.setBackgroundColor(relevantColor);
                 }
 
                 @Override
