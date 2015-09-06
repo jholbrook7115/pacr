@@ -7,9 +7,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -21,6 +21,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.PendingResult;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +37,7 @@ public class MapsActivity extends FragmentActivity {
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Location currentLocation;
-    private LatLng lastWaypoint;
+    private LatLng myLatLng;
     private DirectionsHelper directionsHelper;
     private float zoomLevel;
     private int pathLineWidth;
@@ -46,16 +49,20 @@ public class MapsActivity extends FragmentActivity {
     private boolean mapInitialized = false;
     private boolean followLocation = true;
     private final LatLng defaultCoordinates = new LatLng(39.9814367, -75.15507);
+    private float accuracy = -1;
+    private DateTime arrivalTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        arrivalTime = new DateTime().withTime(9, 0, 0, 0);
         directionsHelper = new DirectionsHelper();
         setUpMapIfNeeded();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 3, getLocationListener());
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 3, getLocationListener());
 
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -96,10 +103,10 @@ public class MapsActivity extends FragmentActivity {
     private void initializeMapElements() {
         double lat = currentLocation.getLatitude();
         double lon = currentLocation.getLongitude();
-        LatLng myLatLng = new LatLng(lat, lon);
+        myLatLng = new LatLng(lat, lon);
 
         //Set initial values for running value variables
-        lastWaypoint = myLatLng;
+//        lastWaypoint = myLatLng;
         zoomLevel = 15;
         pathLineWidth = 15;
 
@@ -189,8 +196,11 @@ public class MapsActivity extends FragmentActivity {
                     if (location == null) return;
 
                     if (currentLocation == null)
-                        currentLocation = new Location(LocationManager.PASSIVE_PROVIDER);
+                        currentLocation = new Location(LocationManager.GPS_PROVIDER);
+
                     currentLocation.set(location);
+                    accuracy = location.getAccuracy();
+
                     if (!mapInitialized) initializeMapElements();
 
                     double lat = 0;
@@ -198,7 +208,7 @@ public class MapsActivity extends FragmentActivity {
                     lat = location.getLatitude();
                     lon = location.getLongitude();
 
-                    LatLng myLatLng = new LatLng(lat, lon);
+                    myLatLng = new LatLng(lat, lon);
 
                     //Add marker
                     myMarker.setPosition(myLatLng);
@@ -206,9 +216,25 @@ public class MapsActivity extends FragmentActivity {
 //                    if (!routeDrawn) drawRoute();
 
                     //Move camera to current location
-                    if(followLocation)
+                    if (followLocation)
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel));
 
+                    TextView userText = (TextView) findViewById(R.id.eta_textview);
+                    TextView reqSpeedText = (TextView) findViewById(R.id.speed_textview);
+
+                    userText.setText(" - ");
+
+                    if (waypoints == null || waypoints.empty()) return;
+
+                    if (directionsHelper.getDistanceInMeters(myLatLng, waypoints.peek().toGmsLatLng()) <= accuracy) {
+                        Waypoint waypoint = waypoints.pop();
+                        String str = Double.toString(getRequiredSpeedKMH());
+                        reqSpeedText.setText(str.substring(0, str.indexOf(".") + 3).concat(" km/h"));
+                        Toast.makeText(getApplicationContext(), "Got to waypoint " + waypoint.toString(), Toast.LENGTH_SHORT).show();
+                    }
+
+                    String str = Double.toString(getRemainingDistance()/1000);
+                    userText.setText(str.substring(0, str.indexOf(".") + 3).concat(" km"));
                 }
 
                 @Override
@@ -225,10 +251,29 @@ public class MapsActivity extends FragmentActivity {
                 public void onProviderDisabled(String provider) {
 
                 }
-            };
+            }
+
+                    ;
         return locationListener;
     }
 
+
+    private double getRemainingDistance() {
+        return directionsHelper.getDistanceInMeters(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), waypoints.peek().toGmsLatLng()) + waypoints.peek().distanceToDestination;
+    }
+    private long getRemainingTime() {
+        long remainingSeconds = (arrivalTime.getMillis()- DateTime.now().getMillis())/1000;
+        return remainingSeconds;
+    }
+    private double getRequiredSpeed(){
+        return getRemainingDistance()/getRemainingTime();
+    }
+    private double getRequiredSpeedKMH(){
+        return getRemainingDistance()/getRemainingTime()*3.6;
+    }
+    private double getRequiredSpeedMPH(){
+        return getRequiredSpeedKMH()*1.6;
+    }
 
 }
 
