@@ -45,6 +45,17 @@ public class DirectionsService {
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
     }
+    public void getDirections(LatLng origin, String destination, PendingResult.Callback<List<LatLng>> callback){
+        this.callback = callback;
+
+        // Getting URL to the Google Directions API
+        String url = getDirectionsUrl(origin, destination);
+
+        DownloadTask downloadTask = new DownloadTask();
+
+        // Start downloading json data from Google Directions API
+        downloadTask.execute(url);
+    }
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -53,6 +64,33 @@ public class DirectionsService {
 
         // Destination of route
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+
+        // Sensor enabled
+        String mode = "mode=walking";
+
+        // Sensor enabled
+        String sensor = "sensor=true";
+
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode + "&" + sensor;
+
+        // Output format
+        String output = "json";
+
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
+
+
+        return url;
+    }
+
+    private String getDirectionsUrl(LatLng origin, String dest) {
+
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination=" + dest;
 
         // Sensor enabled
         String mode = "mode=walking";
