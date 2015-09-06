@@ -16,10 +16,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.PendingResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,10 +32,13 @@ public class MapsActivity extends FragmentActivity {
     private LocationListener locationListener;
     private Location currentLocation;
     private LatLng lastWaypoint;
+    private DirectionsHelper directionsHelper;
     private float zoomLevel;
     private int pathLineWidth;
     private Marker myMarker;
+    private ArrayList<Waypoint> waypoints = new ArrayList<>();
     private ArrayList<LatLng> route = new ArrayList<>();
+    private Polyline polyline;
     private boolean routeDrawn = false;
     private boolean mapInitialized = false;
     private final LatLng defaultCoordinates = new LatLng(39.9814367, -75.15507);
@@ -43,6 +48,7 @@ public class MapsActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        directionsHelper = new DirectionsHelper();
         setUpMapIfNeeded();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -58,21 +64,6 @@ public class MapsActivity extends FragmentActivity {
         setUpMapIfNeeded();
     }
 
-    /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p/>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p/>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
-     */
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
@@ -131,6 +122,7 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onResult(List<LatLng> result) {
                 route.addAll(result);
+                analyzeRoute(route);
                 drawRoute();
             }
 
@@ -143,24 +135,41 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
-    public void addRouteWaypoint(LatLng newWaypoint) {
+    /*public void addRouteWaypoint(LatLng newWaypoint) {
         mMap.addPolyline(new PolylineOptions().
                 add(lastWaypoint, newWaypoint)
                 .width(pathLineWidth).color(Color.argb(75, 0, 255, 0)));
         lastWaypoint = newWaypoint;
-    }
+    }*/
 
     private void drawRoute() {
-        /*Iterator<LatLng> it = route.iterator();
-        while (it.hasNext()) {
-            //Add path line to map
-            LatLng waypoint = it.next();
-            addRouteWaypoint(waypoint);
-        }*/
-        mMap.addPolyline(new PolylineOptions()
+        polyline = mMap.addPolyline(new PolylineOptions()
                 .addAll(route)
                 .width(pathLineWidth).color(Color.argb(75, 0, 0, 255)));
         routeDrawn = true;
+    }
+
+    //Populates the waypoints ArrayList with the route waypoints, each with its relative distance from the destination
+    private void analyzeRoute(ArrayList<LatLng> route){
+        if(route == null) route = this.route;
+        double runningDistance = 0;
+
+        ArrayList<LatLng> reverseRoute = new ArrayList<>();
+        reverseRoute.addAll(route);
+        Collections.reverse(reverseRoute);
+
+        Iterator<LatLng> it = reverseRoute.iterator();
+        LatLng previousWaypoint = it.next();
+
+        while(it.hasNext()){
+            LatLng waypoint = it.next();
+            double distance = directionsHelper.getDistanceInMeters(waypoint, previousWaypoint);
+            runningDistance+=distance;
+            previousWaypoint = waypoint;
+            waypoints.add(new Waypoint(waypoint.latitude, waypoint.longitude, runningDistance));
+        }
+        Collections.reverse(waypoints);
+
     }
 
 
@@ -212,10 +221,6 @@ public class MapsActivity extends FragmentActivity {
         return locationListener;
     }
 
-
-
-
-    /////////////////////////////////////
 
 }
 

@@ -8,9 +8,9 @@ import com.google.android.gms.maps.model.LatLng;
  * Created by gonen on 9/5/15.
  */
 public class DirectionsHelper {
-//    Calculate bearing between two locations:-
 
-    private float getBearing(LatLng begin, LatLng end) {
+//    Calculate bearing between two locations
+    public float getBearing(LatLng begin, LatLng end) {
         double lat = Math.abs(begin.latitude - end.latitude);
         double lng = Math.abs(begin.longitude - end.longitude);
 
@@ -26,9 +26,8 @@ public class DirectionsHelper {
         return -1;
     }
 
-//    Calculate distance between two locations:-
-
-    private String getDistance(LatLng my_latlong,LatLng frnd_latlong){
+//    Calculate distance between two locations
+    public float getDistanceInMeters(LatLng my_latlong,LatLng frnd_latlong){
         Location l1=new Location("One");
         l1.setLatitude(my_latlong.latitude);
         l1.setLongitude(my_latlong.longitude);
@@ -38,20 +37,18 @@ public class DirectionsHelper {
         l2.setLongitude(frnd_latlong.longitude);
 
         float distance=l1.distanceTo(l2);
-        String dist=distance+" M";
+//        String dist=distance+" M";
 
-        if(distance>1000.0f)
+        /*if(distance>1000.0f)
         {
             distance=distance/1000.0f;
             dist=distance+" KM";
-        }
-        return dist;
+        }*/
+        return distance;
     }
 
-//    Get direction between two locations:-
-
-    private String getDirection(LatLng my_latlong,LatLng frnd_latlong) {
-        // TODO Auto-generated method stub
+//    Get direction between two locations
+    public String getDirection(LatLng my_latlong,LatLng frnd_latlong) {
         double my_lat=my_latlong.latitude;
         double my_long=my_latlong.longitude;
 
@@ -71,7 +68,7 @@ public class DirectionsHelper {
         return coordNames[coordIndex]; // returns the coordinate value
     }
 
-    private double getAtan2(double longi,double lat) {
+    public double getAtan2(double longi,double lat) {
         return Math.atan2(longi, lat);
     }
 
