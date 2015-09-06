@@ -13,6 +13,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -43,6 +44,7 @@ public class MapsActivity extends FragmentActivity {
     private Polyline polyline;
     private boolean routeDrawn = false;
     private boolean mapInitialized = false;
+    private boolean followLocation = true;
     private final LatLng defaultCoordinates = new LatLng(39.9814367, -75.15507);
 
     @Override
@@ -102,7 +104,7 @@ public class MapsActivity extends FragmentActivity {
         pathLineWidth = 15;
 
         //Add marker
-        myMarker = mMap.addMarker(new MarkerOptions().position(myLatLng).title("Origin"));
+        myMarker = mMap.addMarker(new MarkerOptions().position(myLatLng).title("Origin").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
         //Move camera to current location
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel));
@@ -167,6 +169,8 @@ public class MapsActivity extends FragmentActivity {
         Iterator<LatLng> it = reverseRoute.iterator();
         LatLng previousWaypoint = it.next();
 
+        mMap.addMarker(new MarkerOptions().position(previousWaypoint).title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
         while (it.hasNext()) {
             LatLng waypoint = it.next();
             double distance = directionsHelper.getDistanceInMeters(waypoint, previousWaypoint);
@@ -174,7 +178,6 @@ public class MapsActivity extends FragmentActivity {
             previousWaypoint = waypoint;
             waypoints.push(new Waypoint(waypoint.latitude, waypoint.longitude, runningDistance));
         }
-
     }
 
 
@@ -183,6 +186,8 @@ public class MapsActivity extends FragmentActivity {
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
+                    if (location == null) return;
+
                     if (currentLocation == null)
                         currentLocation = new Location(LocationManager.PASSIVE_PROVIDER);
                     currentLocation.set(location);
@@ -190,10 +195,8 @@ public class MapsActivity extends FragmentActivity {
 
                     double lat = 0;
                     double lon = 0;
-                    if (location != null) {
-                        lat = location.getLatitude();
-                        lon = location.getLongitude();
-                    }
+                    lat = location.getLatitude();
+                    lon = location.getLongitude();
 
                     LatLng myLatLng = new LatLng(lat, lon);
 
@@ -203,8 +206,8 @@ public class MapsActivity extends FragmentActivity {
 //                    if (!routeDrawn) drawRoute();
 
                     //Move camera to current location
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel);
-                    mMap.animateCamera(cameraUpdate);
+                    if(followLocation)
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel));
 
                 }
 
