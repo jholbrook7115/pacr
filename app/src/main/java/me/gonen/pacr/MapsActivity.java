@@ -7,6 +7,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -46,6 +52,7 @@ public class MapsActivity extends FragmentActivity {
     private boolean mapInitialized = false;
     private boolean followLocation = true;
     private final LatLng defaultCoordinates = new LatLng(39.9814367, -75.15507);
+    private EditText myEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +67,39 @@ public class MapsActivity extends FragmentActivity {
 
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+        myEditText = (EditText) findViewById(R.id.location_edittext); //make final to refer in onTouch
+
+        myEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Toast.makeText(getApplicationContext(), "Searching for " + myEditText.getText().toString(), Toast.LENGTH_LONG).show();
+                    getDirections(myEditText.getText().toString());
+                }
+                return false;
+            }
+        });
+
+/*
+        myEditText.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                myEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if(!hasFocus){
+                            // user is done editing
+                            Toast.makeText(getApplicationContext(), "Searching for " + myEditText.getText().toString(), Toast.LENGTH_LONG).show();
+                            getDirections(myEditText.getText().toString());
+                        }
+                    }
+                });
+                return false;
+            }
+        });
+        */
     }
 
     @Override
@@ -118,17 +158,22 @@ public class MapsActivity extends FragmentActivity {
 
         mapInitialized = true;
 
-        /***********************************************************/
-        //Test directions API call
+    }
 
+    private void getDirections(String dest) {
         DirectionsService dService = new DirectionsService(mMap);
-        dService.getDirections(myLatLng, defaultCoordinates, new PendingResult.Callback<List<LatLng>>() {
+        dService.getDirections(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), dest, new PendingResult.Callback<List<LatLng>>() {
             @Override
             public void onResult(List<LatLng> result) {
-                if (result == null) {
+                if (result == null || result.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Could not find route", Toast.LENGTH_LONG).show();
                     return;
                 }
+
+                mMap.clear();
+                route.clear();
+                waypoints.clear();
+
                 route.addAll(result);
                 analyzeRoute(route);
                 drawRoute();
@@ -139,8 +184,6 @@ public class MapsActivity extends FragmentActivity {
 
             }
         });
-        /***********************************************************/
-
     }
 
     /*public void addRouteWaypoint(LatLng newWaypoint) {
@@ -161,13 +204,16 @@ public class MapsActivity extends FragmentActivity {
     private void analyzeRoute(ArrayList<LatLng> route) {
         if (route == null) route = this.route;
         double runningDistance = 0;
+        if (waypoints == null) waypoints = new Stack<>();
 
         ArrayList<LatLng> reverseRoute = new ArrayList<>();
         reverseRoute.addAll(route);
         Collections.reverse(reverseRoute);
 
+        LatLng previousWaypoint = new LatLng(0,0);
         Iterator<LatLng> it = reverseRoute.iterator();
-        LatLng previousWaypoint = it.next();
+        if (it.hasNext())
+            previousWaypoint = it.next();
 
         mMap.addMarker(new MarkerOptions().position(previousWaypoint).title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
@@ -206,7 +252,7 @@ public class MapsActivity extends FragmentActivity {
 //                    if (!routeDrawn) drawRoute();
 
                     //Move camera to current location
-                    if(followLocation)
+                    if (followLocation)
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, zoomLevel));
 
                 }
